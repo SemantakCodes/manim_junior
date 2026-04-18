@@ -42,7 +42,7 @@ def run(config: EngineConfig) -> None:
     rect = Rectangle(
         id="bottom_rect",
         x=-300, y=200,
-        width=120, height=70,
+        width=120, height=160,
         color=(255, 80, 80),
         alpha=0.0,
         z_order=0,
