@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect x="0" y="0" width="1280" height="720" fill="#0F0F19" />
+  <g id="frame-95">
+    <circle cx="779.81" cy="442.85" r="30.00" fill="#FF0000" fill-opacity="1.000" />
+    <circle cx="604.41" cy="518.57" r="30.00" fill="#CBFF00" fill-opacity="1.000" />
+    <circle cx="478.20" cy="375.15" r="30.00" fill="#00FF66" fill-opacity="1.000" />
+    <circle cx="575.59" cy="210.80" r="30.00" fill="#0066FF" fill-opacity="1.000" />
+    <circle cx="762.00" cy="252.64" r="30.00" fill="#CC00FF" fill-opacity="1.000" />
+    <text x="560.00" y="345.00" font-size="32" font-family="monospace" fill="#FFFFFF" fill-opacity="1.000">AI RING</text>
+  </g>
+</svg>
