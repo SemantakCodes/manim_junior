@@ -1,6 +1,4 @@
 """
-SVG export example — same scene as example_pygame.py but outputs
-per-frame SVG files to output/frames/frame_NNNN.svg.
 
 Run directly:
     python examples/example_svg.py
@@ -9,8 +7,6 @@ Or via CLI:
 """
 
 import sys, os
-# Ensure the project root (parent of examples/) is on sys.path so that
-# "from core.X import ..." works when this file is run directly as a script.
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from core.config import EngineConfig
@@ -60,7 +56,6 @@ def run(config: EngineConfig) -> None:
     scene.add(rect)
     scene.add(label)
 
-    # ── Timeline ─────────────────────────────────────────────────────────
     scene.play(FadeIn(label,  duration=0.8, easing=ease_out_cubic))
     scene.play(FadeIn(circle, duration=1.0, easing=ease_out_cubic))
 

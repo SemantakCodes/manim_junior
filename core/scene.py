@@ -1,4 +1,4 @@
-"""Scene — the top-level orchestrator that wires all subsystems together."""
+
 
 import random
 from typing import TYPE_CHECKING
@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 
 
 def _make_renderer(config: EngineConfig) -> "BaseRenderer":
-    """Instantiate the correct renderer from config.renderer string."""
     if config.renderer == "pygame":
         from renderers.pygame_renderer import PygameRenderer
         return PygameRenderer()
@@ -41,7 +40,6 @@ class Scene:
     """
 
     def __init__(self, config: EngineConfig) -> None:
-        """Initialize scene with given config; seeds RNG for determinism."""
         self.config: EngineConfig = config
         random.seed(config.seed)
 
@@ -50,15 +48,9 @@ class Scene:
         self.camera: Camera = Camera()
         self._renderer: "BaseRenderer | None" = None
 
-        # Tracks the current end of the sequential animation queue
         self._sequential_cursor: float = 0.0
 
-    # ------------------------------------------------------------------ #
-    #  Object management                                                   #
-    # ------------------------------------------------------------------ #
-
     def add(self, obj: SceneObject) -> None:
-        """Add a scene object; raises if an object with the same id already exists."""
         if obj.id in self._objects:
             raise ValueError(f"Scene already contains object with id='{obj.id}'")
         self._objects[obj.id] = obj
@@ -73,9 +65,8 @@ class Scene:
             raise KeyError(f"No object with id='{obj_id}'")
         return self._objects[obj_id]
 
-    # ------------------------------------------------------------------ #
-    #  Animation scheduling                                               #
-    # ------------------------------------------------------------------ #
+    
+    #  Animation scheduling                                               
 
     def play(
         self,
@@ -86,7 +77,7 @@ class Scene:
         """
         Schedule an animation.
 
-        Args:
+        Argumentss:
             animation: The animation to schedule.
             at:        Absolute start time in seconds.  If None, the animation
                        is queued sequentially after the previous one.
@@ -106,13 +97,11 @@ class Scene:
         end = start + animation.delay + animation.duration
         if end > self._sequential_cursor:
             self._sequential_cursor = end
-
-    # ------------------------------------------------------------------ #
-    #  Rendering loop                                                      #
-    # ------------------------------------------------------------------ #
+            
+            
+    #  Rendering loop                                                      
 
     def render(self) -> None:
-        """Run the full render loop (real-time for Pygame, offline for SVG)."""
         renderer = _make_renderer(self.config)
         self._renderer = renderer
         renderer.initialize(self.config)
@@ -128,21 +117,16 @@ class Scene:
         renderer.finalize()
 
     def _sorted_objects(self) -> list[SceneObject]:
-        """Return objects sorted by z_order (ascending)."""
         return sorted(self._objects.values(), key=lambda o: o.z_order)
 
     def _draw_frame(self, renderer: "BaseRenderer") -> None:
-        """Apply camera transform to all objects and call their render methods."""
         cfg = self.config
         for obj in self._sorted_objects():
             if not obj.visible:
                 continue
-            # Camera-transform every draw call by monkey-patching coordinates
-            # We inject a thin proxy that wraps screen-space conversion.
             _draw_with_camera(obj, renderer, self.camera, cfg.width, cfg.height)
 
     def _render_offline(self, renderer: "BaseRenderer", clock: FrameClock) -> None:
-        """Offline SVG loop — fixed dt, runs for exactly total_duration frames."""
         total = self._timeline.total_duration()
         if total <= 0.0:
             total = 1.0  # at least one frame
@@ -164,7 +148,6 @@ class Scene:
                 print(f"[FRAME] #{clock.frame_index} t={clock.elapsed_time:.3f}s dt={clock.dt:.4f}s")
 
     def _render_realtime(self, renderer, clock: FrameClock) -> None:
-        """Real-time Pygame loop — runs until timeline complete or user exits."""
         from renderers.pygame_renderer import PygameRenderer
         pg_renderer: PygameRenderer = renderer  # type: ignore[assignment]
 
@@ -198,15 +181,11 @@ class Scene:
                 break
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Camera proxy — wraps renderer draw calls with world→screen transform
-# ─────────────────────────────────────────────────────────────────────────────
+# Camera proxy
+
 
 class _CameraRenderer:
-    """
-    Thin wrapper that applies camera transform to all draw coordinates
-    before forwarding to the real renderer.
-    """
+    
 
     def __init__(self, renderer: "BaseRenderer", camera: Camera, w: float, h: float) -> None:
         self._r = renderer
@@ -252,6 +231,5 @@ def _draw_with_camera(
     w: float,
     h: float,
 ) -> None:
-    """Render an object through the camera-transform proxy."""
     proxy = _CameraRenderer(renderer, camera, w, h)
     obj.render(proxy)  # type: ignore[arg-type]

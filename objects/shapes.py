@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 
 class Circle(SceneObject):
-    """A filled or stroked circle."""
 
     def __init__(
         self,
@@ -25,7 +24,6 @@ class Circle(SceneObject):
         visible: bool = True,
         z_order: int = 0,
     ) -> None:
-        """Initialize a circle with center at (x, y)."""
         super().__init__(id=id, x=x, y=y, color=color, alpha=alpha,
                          visible=visible, z_order=z_order)
         self.radius: float = radius
@@ -33,7 +31,6 @@ class Circle(SceneObject):
         self.stroke_width: float = stroke_width
 
     def render(self, renderer: "BaseRenderer") -> None:
-        """Draw this circle via the renderer."""
         if not self.visible:
             return
         renderer.draw_circle(
@@ -48,7 +45,6 @@ class Circle(SceneObject):
 
 
 class Rectangle(SceneObject):
-    """A filled or stroked rectangle centered at transform.x/y."""
 
     def __init__(
         self,
@@ -64,7 +60,6 @@ class Rectangle(SceneObject):
         visible: bool = True,
         z_order: int = 0,
     ) -> None:
-        """Initialize a rectangle centered at (x, y)."""
         super().__init__(id=id, x=x, y=y, color=color, alpha=alpha,
                          visible=visible, z_order=z_order)
         self.width: float = width
@@ -73,12 +68,10 @@ class Rectangle(SceneObject):
         self.stroke_width: float = stroke_width
 
     def render(self, renderer: "BaseRenderer") -> None:
-        """Draw this rectangle via the renderer."""
         if not self.visible:
             return
         sw = self.width * self.transform.scale
         sh = self.height * self.transform.scale
-        # top-left corner from center
         renderer.draw_rect(
             x=self.transform.x - sw / 2,
             y=self.transform.y - sh / 2,
@@ -92,7 +85,6 @@ class Rectangle(SceneObject):
 
 
 class Line(SceneObject):
-    """A line segment from (transform.x, transform.y) to (x2, y2)."""
 
     def __init__(
         self,
@@ -107,7 +99,6 @@ class Line(SceneObject):
         visible: bool = True,
         z_order: int = 0,
     ) -> None:
-        """Initialize a line from (x, y) to (x2, y2)."""
         super().__init__(id=id, x=x, y=y, color=color, alpha=alpha,
                          visible=visible, z_order=z_order)
         self.x2: float = x2
@@ -115,7 +106,6 @@ class Line(SceneObject):
         self.stroke_width: float = stroke_width
 
     def render(self, renderer: "BaseRenderer") -> None:
-        """Draw this line via the renderer."""
         if not self.visible:
             return
         renderer.draw_line(
@@ -130,7 +120,6 @@ class Line(SceneObject):
 
 
 class Polygon(SceneObject):
-    """A filled or stroked polygon defined by world-space points."""
 
     def __init__(
         self,
@@ -145,7 +134,7 @@ class Polygon(SceneObject):
         visible: bool = True,
         z_order: int = 0,
     ) -> None:
-        """Initialize a polygon; points are relative to (x, y)."""
+        
         super().__init__(id=id, x=x, y=y, color=color, alpha=alpha,
                          visible=visible, z_order=z_order)
         self.points: list[tuple[float, float]] = points or []
@@ -153,7 +142,6 @@ class Polygon(SceneObject):
         self.stroke_width: float = stroke_width
 
     def render(self, renderer: "BaseRenderer") -> None:
-        """Draw this polygon via the renderer."""
         if not self.visible or not self.points:
             return
         s = self.transform.scale
@@ -163,7 +151,6 @@ class Polygon(SceneObject):
 
         transformed: list[tuple[float, float]] = []
         for px, py in self.points:
-            # scale then rotate then translate
             sx, sy = px * s, py * s
             rx = sx * cos_a - sy * sin_a + self.transform.x
             ry = sx * sin_a + sy * cos_a + self.transform.y

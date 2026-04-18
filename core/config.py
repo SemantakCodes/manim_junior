@@ -5,7 +5,6 @@ from dataclasses import dataclass, field
 
 @dataclass
 class EngineConfig:
-    """Immutable configuration for a rendering session."""
 
     width: int = 1280
     height: int = 720

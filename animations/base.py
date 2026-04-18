@@ -1,4 +1,4 @@
-"""Abstract Animation base class."""
+#Abstract Animation base class
 
 from abc import ABC, abstractmethod
 from typing import Callable, TYPE_CHECKING
@@ -13,7 +13,7 @@ class Animation(ABC):
     """
     Base for all time-based animations.
 
-    Subclasses implement apply(t) to mutate the target object.
+    Subclasses implement apply (t) to mutate the target object.
     """
 
     def __init__(
@@ -44,7 +44,7 @@ class Animation(ABC):
         self._completed: bool = False
 
     def update(self, dt: float) -> None:
-        """Advance the animation by dt seconds and apply the interpolated value."""
+        #Advance the animation by dt seconds and apply the interpolated value.
         if self._completed:
             return
 
@@ -79,10 +79,8 @@ class Animation(ABC):
 
     @abstractmethod
     def apply(self, t: float) -> None:
-        """Apply the animated value at normalized time t ∈ [0, 1]."""
         ...
 
     @property
     def is_complete(self) -> bool:
-        """True when the animation (including delay) has finished."""
         return self._completed

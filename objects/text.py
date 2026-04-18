@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 
 class TextObject(SceneObject):
-    """A text label rendered at a world-space position."""
 
     def __init__(
         self,
@@ -23,14 +22,12 @@ class TextObject(SceneObject):
         visible: bool = True,
         z_order: int = 0,
     ) -> None:
-        """Initialize a text object at (x, y)."""
         super().__init__(id=id, x=x, y=y, color=color, alpha=alpha,
                          visible=visible, z_order=z_order)
         self.text: str = text
         self.font_size: int = font_size
 
     def render(self, renderer: "BaseRenderer") -> None:
-        """Draw this text string via the renderer."""
         if not self.visible:
             return
         scaled_size = max(1, int(self.font_size * self.transform.scale))

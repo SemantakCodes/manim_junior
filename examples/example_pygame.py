@@ -1,10 +1,4 @@
 """
-Pygame example scene:
-  1. Fade in a blue circle at center
-  2. Move it top-right while scaling 2×
-  3. Fade in a red rectangle at bottom-left, rotate 360°
-  4. Pan camera to follow the circle
-  5. Fade everything out
 
 Run directly:
     python examples/example_pygame.py
@@ -25,11 +19,9 @@ from animations.easing import ease_out_cubic, ease_in_out_quad
 
 
 def run(config: EngineConfig) -> None:
-    """Build and render the Pygame demo scene."""
     config.renderer = "pygame"
     scene = Scene(config)
 
-    # ── Objects ──────────────────────────────────────────────────────────
     circle = Circle(
         id="hero_circle",
         x=0, y=0,
@@ -51,7 +43,7 @@ def run(config: EngineConfig) -> None:
     label = TextObject(
         id="title",
         x=-160, y=-280,
-        text="AnimEngine Demo",
+        text="SKibidi dop dop",
         font_size=28,
         color=(220, 220, 220),
         alpha=0.0,
@@ -62,28 +54,27 @@ def run(config: EngineConfig) -> None:
     scene.add(rect)
     scene.add(label)
 
-    # ── Timeline ─────────────────────────────────────────────────────────
 
-    # Label fades in first
+    # label fades in first
     scene.play(FadeIn(label, duration=0.8, easing=ease_out_cubic))
 
-    # Circle fades in
+    # circle fades in
     scene.play(FadeIn(circle, duration=1.0, easing=ease_out_cubic))
 
-    # Simultaneously move & scale the circle
+    # simultaneously move & scale the circle
     scene.play(MoveTo(circle, end_x=300, end_y=-150, duration=1.8, easing=ease_out_cubic), at=1.8)
     scene.play(ScaleTo(circle, end_scale=2.0, duration=1.8, easing=ease_out_cubic), at=1.8)
 
-    # Rectangle fades in at bottom-left
+    # rectangle fades in at bottom-left
     scene.play(FadeIn(rect, duration=0.8, easing=ease_out_cubic), at=1.8)
 
-    # Rotate the rectangle 360°
+    # rotate the rectangle 360°
     scene.play(RotateTo(rect, end_rotation=360.0, duration=2.0, easing=ease_in_out_quad), at=2.6)
 
-    # Camera pans to follow the circle's destination
+    # camera pans to follow the circle's destination
     scene.camera.pan_to(150, -75, duration=1.8, easing=ease_out_cubic)
 
-    # Fade everything out at the end
+    # fade everything out at the end yayayayay
     fade_start = 4.8
     scene.play(FadeOut(circle, duration=0.8), at=fade_start)
     scene.play(FadeOut(rect,   duration=0.8), at=fade_start)

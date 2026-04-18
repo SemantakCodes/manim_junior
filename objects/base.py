@@ -19,11 +19,7 @@ class Transform:
 
 
 class SceneObject(ABC):
-    """
-    Abstract base for every drawable entity in a scene.
-
-    Subclasses implement render() to call appropriate renderer primitives.
-    """
+   
 
     def __init__(
         self,

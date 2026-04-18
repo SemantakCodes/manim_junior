@@ -4,12 +4,69 @@ import argparse
 import importlib.util
 import os
 import sys
+import subprocess
+import glob
+
+# Try to import cairosvg for the conversion step
+try:
+    import cairosvg
+    CAIRO_AVAILABLE = True
+except (ImportError, OSError):
+    CAIRO_AVAILABLE = False
 
 # Ensure the project root is importable regardless of working directory
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from core.config import EngineConfig
 
+def compile_video(config: EngineConfig):
+    """Helper to convert SVG frames to PNG and stitch them into an MP4."""
+    frames_dir = os.path.join(config.output_path, "frames")
+    output_file = os.path.join(config.output_path, f"{config.output_filename}.mp4")
+
+    if not os.path.exists(frames_dir):
+        print(f"[Video] ❌ Frames directory not found: {frames_dir}")
+        return
+
+    svg_files = sorted(glob.glob(os.path.join(frames_dir, "*.svg")))
+    if not svg_files:
+        print("[Video] ❌ No SVG frames found to compile.")
+        return
+
+    if not CAIRO_AVAILABLE:
+        print("[Video] ❌ Cannot compile: cairosvg or Cairo DLLs missing.")
+        return
+
+    print(f"[Video] Converting {len(svg_files)} SVGs to temporary PNGs...")
+    
+    # 1. Convert to temporary PNGs
+    png_pattern = os.path.join(frames_dir, "temp_frame_%04d.png")
+    for i, svg_path in enumerate(svg_files):
+        target_png = os.path.join(frames_dir, f"temp_frame_{i+1:04d}.png")
+        cairosvg.svg2png(url=svg_path, write_to=target_png)
+
+    # 2. Run FFmpeg
+    print(f"[Video] Stitching with FFmpeg at {config.fps} FPS...")
+    command = [
+        "ffmpeg", "-y",
+        "-framerate", str(config.fps),
+        "-i", png_pattern,
+        "-c:v", "libx264",
+        "-crf", "18",
+        "-pix_fmt", "yuv420p",
+        output_file
+    ]
+
+    try:
+        subprocess.run(command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+        print(f"[Video] ✅ Success! Created: {output_file}")
+    except (subprocess.CalledProcessError, FileNotFoundError) as e:
+        print(f"[Video] ❌ FFmpeg failed. Ensure FFmpeg is installed and in your PATH.")
+    finally:
+        # 3. Cleanup
+        temp_pngs = glob.glob(os.path.join(frames_dir, "temp_frame_*.png"))
+        for png in temp_pngs:
+            os.remove(png)
 
 def load_scene_module(path: str):
     """Dynamically import a Python file and return its module object."""
@@ -26,7 +83,6 @@ def load_scene_module(path: str):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)  # type: ignore[union-attr]
     return module
-
 
 def main() -> None:
     """Parse CLI args, build EngineConfig, and run the requested scene."""
@@ -53,6 +109,8 @@ def main() -> None:
         required=True,
         help="Path to a Python scene file exposing a run(config) function",
     )
+    parser.add_argument("--video", action="store_true", default=True, help="Compile to MP4 after rendering (SVG only)")
+    parser.add_argument("--no-video", action="store_false", dest="video", help="Disable MP4 compilation")
     parser.add_argument("--debug", action="store_true", help="Enable debug overlay/logging")
     parser.add_argument("--seed",  type=int, default=42,   help="RNG seed for determinism")
     parser.add_argument(
@@ -89,7 +147,14 @@ def main() -> None:
 
     print(f"[AnimEngine] renderer={config.renderer}  {config.width}x{config.height}  {config.fps}fps")
     print(f"[AnimEngine] scene={args.scene}")
+    
+    # Run the actual animation engine
     module.run(config)
+    
+    # If using SVG and video flag is set, compile the video
+    if config.renderer == "svg" and args.video:
+        compile_video(config)
+
     print("[AnimEngine] Done.")
 
 

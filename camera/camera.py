@@ -8,7 +8,6 @@ from animations.easing import linear
 
 @dataclass
 class _CameraPanAnim:
-    """Internal lightweight camera pan animation."""
 
     start_x: float
     start_y: float
@@ -22,7 +21,6 @@ class _CameraPanAnim:
 
 @dataclass
 class _CameraZoomAnim:
-    """Internal lightweight camera zoom animation."""
 
     start_zoom: float
     end_zoom: float
@@ -33,14 +31,8 @@ class _CameraZoomAnim:
 
 
 class Camera:
-    """
-    2D camera with position and zoom.
-
-    World coordinates are converted to screen pixels via world_to_screen().
-    """
 
     def __init__(self, x: float = 0.0, y: float = 0.0, zoom: float = 1.0) -> None:
-        """Initialize camera centered at (x, y) with given zoom."""
         self.x: float = x
         self.y: float = y
         self.zoom: float = zoom
@@ -54,7 +46,6 @@ class Camera:
         duration: float = 1.0,
         easing: Callable[[float], float] = linear,
     ) -> None:
-        """Schedule a smooth pan to world position (x, y)."""
         self._pan_anim = _CameraPanAnim(
             start_x=self.x,
             start_y=self.y,
@@ -70,7 +61,6 @@ class Camera:
         duration: float = 1.0,
         easing: Callable[[float], float] = linear,
     ) -> None:
-        """Schedule a smooth zoom to the given level."""
         self._zoom_anim = _CameraZoomAnim(
             start_zoom=self.zoom,
             end_zoom=level,
@@ -79,7 +69,6 @@ class Camera:
         )
 
     def update(self, dt: float) -> None:
-        """Advance camera animations by dt seconds."""
         if self._pan_anim and not self._pan_anim.done:
             anim = self._pan_anim
             anim.elapsed += dt
@@ -102,11 +91,9 @@ class Camera:
     def world_to_screen(
         self, wx: float, wy: float, screen_w: float, screen_h: float
     ) -> tuple[float, float]:
-        """Convert world coordinates to screen-space pixels."""
         sx = (wx - self.x) * self.zoom + screen_w / 2
         sy = (wy - self.y) * self.zoom + screen_h / 2
         return sx, sy
 
     def scale_value(self, world_val: float) -> float:
-        """Scale a world-space scalar (e.g. radius) to screen space."""
         return world_val * self.zoom

@@ -1,5 +1,3 @@
-"""Offline SVG renderer — writes per-frame SVG files using stdlib xml.etree."""
-
 import os
 import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING
@@ -11,18 +9,15 @@ if TYPE_CHECKING:
 
 
 def _rgb_to_hex(color: tuple) -> str:
-    """Convert (R, G, B) tuple to '#RRGGBB' hex string."""
     r, g, b = (max(0, min(255, int(c))) for c in color)
     return f"#{r:02X}{g:02X}{b:02X}"
 
 
 def _opacity(alpha: float) -> str:
-    """Clamp alpha and return as a string for SVG opacity attributes."""
     return f"{max(0.0, min(1.0, alpha)):.3f}"
 
 
 class SVGRenderer(BaseRenderer):
-    """Writes one SVG file per frame into output_path/frames/."""
 
     def __init__(self) -> None:
         """Initialize renderer state."""
@@ -81,9 +76,7 @@ class SVGRenderer(BaseRenderer):
         """No-op for frame-based SVG output; all frames already written."""
         pass
 
-    # ------------------------------------------------------------------ #
-    #  Draw calls                                                          #
-    # ------------------------------------------------------------------ #
+    
 
     def _g(self) -> ET.Element:
         """Return the current frame group (assert safety)."""

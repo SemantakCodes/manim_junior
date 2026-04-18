@@ -1,17 +1,10 @@
-"""Frame clock — manages dt, frame index, and elapsed time."""
+#Frame clock — manages dt, frame index, and elapsed time
 
 
 class FrameClock:
-    """Tracks frame progression for both real-time and offline rendering."""
 
     def __init__(self, fps: int, offline: bool = False) -> None:
-        """
-        Initialize clock.
-
-        Args:
-            fps: Target frames per second.
-            offline: If True, use fixed dt = 1/fps (SVG mode).
-        """
+        
         self.fps: int = fps
         self.offline: bool = offline
         self.frame_index: int = 0

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class BaseRenderer(ABC):
-    """Dumb drawing backend — only knows how to render primitives."""
+    """Dumb drawing backend"""
 
     @abstractmethod
     def initialize(self, config: "EngineConfig") -> None:

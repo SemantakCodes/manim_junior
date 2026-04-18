@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
-  <rect x="0" y="0" width="1280" height="720" fill="#0F0F19" />
-  <g id="frame-42">
-    <rect x="131.27" y="599.37" width="120.00" height="70.00" fill="#FF5050" fill-opacity="0.000" />
-    <circle cx="491.27" cy="434.37" r="60.00" fill="#50A0FF" fill-opacity="0.951" />
-    <text x="331.27" y="154.37" font-size="28" font-family="monospace" fill="#DCDCDC" fill-opacity="1.000">AnimEngine SVG</text>
-  </g>
-</svg>

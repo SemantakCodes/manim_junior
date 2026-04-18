@@ -10,18 +10,14 @@ if TYPE_CHECKING:
 
 
 class PygameRenderer(BaseRenderer):
-    """Renders a scene in a live Pygame window with alpha blending."""
 
     def __init__(self) -> None:
-        """Initialize renderer state (no Pygame calls yet)."""
         self._config: "EngineConfig | None" = None
         self._screen = None       # pygame.Surface
         self._font = None         # pygame.font.Font
         self._running: bool = True
 
-    # ------------------------------------------------------------------ #
-    #  Lifecycle                                                           #
-    # ------------------------------------------------------------------ #
+    #life cycle  XD
 
     def initialize(self, config: "EngineConfig") -> None:
         """Create the Pygame window and font."""
@@ -36,7 +32,6 @@ class PygameRenderer(BaseRenderer):
         self._running = True
 
     def begin_frame(self, background_color: tuple) -> None:
-        """Clear screen to background color and process OS events."""
         import pygame
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -46,7 +41,6 @@ class PygameRenderer(BaseRenderer):
         self._screen.fill(background_color)
 
     def end_frame(self) -> None:
-        """Flip the display buffer."""
         import pygame
         pygame.display.flip()
 
@@ -57,12 +51,9 @@ class PygameRenderer(BaseRenderer):
 
     @property
     def is_running(self) -> bool:
-        """False after ESC or window close."""
         return self._running
 
-    # ------------------------------------------------------------------ #
-    #  Draw calls                                                          #
-    # ------------------------------------------------------------------ #
+   
 
     def draw_circle(
         self,
@@ -74,7 +65,6 @@ class PygameRenderer(BaseRenderer):
         fill: bool = True,
         stroke_width: float = 2,
     ) -> None:
-        """Draw an alpha-blended circle."""
         import pygame
         if alpha <= 0.0 or radius <= 0:
             return
@@ -99,7 +89,6 @@ class PygameRenderer(BaseRenderer):
         fill: bool = True,
         stroke_width: float = 2,
     ) -> None:
-        """Draw an alpha-blended rectangle."""
         import pygame
         if alpha <= 0.0 or w <= 0 or h <= 0:
             return
@@ -122,11 +111,9 @@ class PygameRenderer(BaseRenderer):
         alpha: float,
         stroke_width: float = 2,
     ) -> None:
-        """Draw an alpha-blended line."""
         import pygame
         if alpha <= 0.0:
             return
-        # Build minimal bounding surface
         mx, my = min(x1, x2), min(y1, y2)
         bw = max(int(abs(x2 - x1)) + int(stroke_width) + 4, 1)
         bh = max(int(abs(y2 - y1)) + int(stroke_width) + 4, 1)
@@ -145,7 +132,7 @@ class PygameRenderer(BaseRenderer):
         fill: bool = True,
         stroke_width: float = 2,
     ) -> None:
-        """Draw an alpha-blended polygon."""
+        """Draw a polygon."""
         import pygame
         if alpha <= 0.0 or len(points) < 3:
             return
@@ -172,7 +159,6 @@ class PygameRenderer(BaseRenderer):
         color: tuple,
         alpha: float,
     ) -> None:
-        """Render text at screen position (x, y)."""
         import pygame
         if alpha <= 0.0:
             return
@@ -188,7 +174,7 @@ class PygameRenderer(BaseRenderer):
         fps: float,
         obj_count: int,
     ) -> None:
-        """Render debug info overlay (top-left)."""
+        
         import pygame
         lines = [
             f"Frame: {frame}",

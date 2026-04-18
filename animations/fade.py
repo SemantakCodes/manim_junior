@@ -1,4 +1,4 @@
-"""Fade animations: FadeIn and FadeOut."""
+#Fade animations: FadeIn and FadeOut.
 
 from typing import Callable, TYPE_CHECKING
 
@@ -10,7 +10,6 @@ if TYPE_CHECKING:
 
 
 class FadeIn(Animation):
-    """Animate target.alpha from 0.0 to 1.0."""
 
     def __init__(
         self,
@@ -20,17 +19,14 @@ class FadeIn(Animation):
         easing: Callable[[float], float] = linear,
         debug: bool = False,
     ) -> None:
-        """Initialize FadeIn; sets target alpha to 0 immediately."""
         super().__init__(target, duration, delay, easing, debug)
         target.alpha = 0.0
 
     def apply(self, t: float) -> None:
-        """Set alpha proportional to t."""
         self.target.alpha = t
 
 
 class FadeOut(Animation):
-    """Animate target.alpha from 1.0 to 0.0."""
 
     def __init__(
         self,
@@ -40,9 +36,7 @@ class FadeOut(Animation):
         easing: Callable[[float], float] = linear,
         debug: bool = False,
     ) -> None:
-        """Initialize FadeOut; target alpha is unchanged until animation starts."""
         super().__init__(target, duration, delay, easing, debug)
 
     def apply(self, t: float) -> None:
-        """Set alpha inversely proportional to t."""
         self.target.alpha = 1.0 - t
