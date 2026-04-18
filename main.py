@@ -1,4 +1,4 @@
-"""CLI entry point — dynamically loads and runs a scene script."""
+
 
 import argparse
 import importlib.util
@@ -7,7 +7,6 @@ import sys
 import subprocess
 import glob
 
-# Try to import cairosvg for the conversion step
 try:
     import cairosvg
     CAIRO_AVAILABLE = True
@@ -25,19 +24,19 @@ def compile_video(config: EngineConfig):
     output_file = os.path.join(config.output_path, f"{config.output_filename}.mp4")
 
     if not os.path.exists(frames_dir):
-        print(f"[Video] ❌ Frames directory not found: {frames_dir}")
+        print(f" not found: {frames_dir}")
         return
 
     svg_files = sorted(glob.glob(os.path.join(frames_dir, "*.svg")))
     if not svg_files:
-        print("[Video] ❌ No SVG frames found to compile.")
+        print("SVG frames found ")
         return
 
     if not CAIRO_AVAILABLE:
-        print("[Video] ❌ Cannot compile: cairosvg or Cairo DLLs missing.")
+        print("dll error")
         return
 
-    print(f"[Video] Converting {len(svg_files)} SVGs to temporary PNGs...")
+    print("converting svg to png")
     
     # 1. Convert to temporary PNGs
     png_pattern = os.path.join(frames_dir, "temp_frame_%04d.png")
@@ -46,7 +45,6 @@ def compile_video(config: EngineConfig):
         cairosvg.svg2png(url=svg_path, write_to=target_png)
 
     # 2. Run FFmpeg
-    print(f"[Video] Stitching with FFmpeg at {config.fps} FPS...")
     command = [
         "ffmpeg", "-y",
         "-framerate", str(config.fps),
@@ -59,9 +57,9 @@ def compile_video(config: EngineConfig):
 
     try:
         subprocess.run(command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-        print(f"[Video] ✅ Success! Created: {output_file}")
+        print(f"Created: {output_file}")
     except (subprocess.CalledProcessError, FileNotFoundError) as e:
-        print(f"[Video] ❌ FFmpeg failed. Ensure FFmpeg is installed and in your PATH.")
+        print("FFmpeg failed.")
     finally:
         # 3. Cleanup
         temp_pngs = glob.glob(os.path.join(frames_dir, "temp_frame_*.png"))
@@ -72,12 +70,12 @@ def load_scene_module(path: str):
     """Dynamically import a Python file and return its module object."""
     abs_path = os.path.abspath(path)
     if not os.path.exists(abs_path):
-        print(f"[ERROR] Scene file not found: {abs_path}")
+        print(f"Scene file not found: {abs_path}")
         sys.exit(1)
 
     spec = importlib.util.spec_from_file_location("_scene_module", abs_path)
     if spec is None or spec.loader is None:
-        print(f"[ERROR] Could not load scene module: {abs_path}")
+        print(f"Could not load scene module: {abs_path}")
         sys.exit(1)
 
     module = importlib.util.module_from_spec(spec)
