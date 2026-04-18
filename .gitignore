@@ -22,6 +22,7 @@ wheels/
 *.egg-info/
 */output
 */frames/
+*/examples/
 
 # --- Project-Specific Outputs (CRITICAL) ---
 # This ignores the folders where you'll be dumping SVG frames and final MP4s
