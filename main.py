@@ -1,5 +1,3 @@
-
-
 import argparse
 import importlib.util
 import os
@@ -13,13 +11,11 @@ try:
 except (ImportError, OSError):
     CAIRO_AVAILABLE = False
 
-# Ensure the project root is importable regardless of working directory
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from core.config import EngineConfig
 
 def compile_video(config: EngineConfig):
-    """Helper to convert SVG frames to PNG and stitch them into an MP4."""
     frames_dir = os.path.join(config.output_path, "frames")
     output_file = os.path.join(config.output_path, f"{config.output_filename}.mp4")
 
@@ -38,7 +34,6 @@ def compile_video(config: EngineConfig):
 
     print("converting svg to png")
     
-    # 1. Convert to temporary PNGs
     png_pattern = os.path.join(frames_dir, "temp_frame_%04d.png")
     for i, svg_path in enumerate(svg_files):
         target_png = os.path.join(frames_dir, f"temp_frame_{i+1:04d}.png")
@@ -67,7 +62,6 @@ def compile_video(config: EngineConfig):
             os.remove(png)
 
 def load_scene_module(path: str):
-    """Dynamically import a Python file and return its module object."""
     abs_path = os.path.abspath(path)
     if not os.path.exists(abs_path):
         print(f"Scene file not found: {abs_path}")
@@ -83,7 +77,6 @@ def load_scene_module(path: str):
     return module
 
 def main() -> None:
-    """Parse CLI args, build EngineConfig, and run the requested scene."""
     parser = argparse.ArgumentParser(
         description="AnimEngine — render a Python scene file",
         formatter_class=argparse.RawTextHelpFormatter,
@@ -146,10 +139,8 @@ def main() -> None:
     print(f"[AnimEngine] renderer={config.renderer}  {config.width}x{config.height}  {config.fps}fps")
     print(f"[AnimEngine] scene={args.scene}")
     
-    # Run the actual animation engine
     module.run(config)
     
-    # If using SVG and video flag is set, compile the video
     if config.renderer == "svg" and args.video:
         compile_video(config)
 
